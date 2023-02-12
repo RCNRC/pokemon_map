@@ -6,3 +6,7 @@ class Pokemon(models.Model):
     image = models.ImageField(blank=True)
     def __str__(self):
         return f"{self.title}"
+
+class PokemonEntity(models.Model):
+    Lat = models.FloatField()
+    Lon = models.FloatField()
