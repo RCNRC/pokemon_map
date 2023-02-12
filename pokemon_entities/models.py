@@ -18,3 +18,5 @@ class PokemonEntity(models.Model):
     pokemon_strength = models.IntegerField(name="Strength", null=True)
     pokemon_defence = models.IntegerField(name="Defence", null=True)
     pokemon_stamona = models.IntegerField(name="Stamina", null=True)
+    def __str__(self):
+        return f"{self.Pokemon.title}"
