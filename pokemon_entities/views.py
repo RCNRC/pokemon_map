@@ -84,7 +84,7 @@ def show_pokemon(request, pokemon_id):
         "title_ru": pokemon.title,
         "title_en": "",
         "title_jp": "",
-        "description": "",
+        "description": pokemon.description,
         "img_url": f"{base_url}media/{pokemon.image}",
         "next_evolution": "",
         "previous_evolution": "",
