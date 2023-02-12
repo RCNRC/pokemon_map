@@ -76,6 +76,14 @@ def show_pokemon(request, pokemon_id):
                 f"{base_url}media/{pokemon_entity.Pokemon.image}"
             )
 
+    next_evolution = pokemon.next_evolutions.all()
+    pokemon_next_evolution = {}
+    if next_evolution:
+        pokemon_next_evolution = {
+            "title_ru": next_evolution[0].title,
+            "pokemon_id": next_evolution[0].id,
+            "img_url": f"{base_url}media/{next_evolution[0].image}",
+        }
 
     pokemon_previous_evolution = {}
     if pokemon.previous_evolution:
