@@ -35,7 +35,10 @@ def show_all_pokemons(request):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
-        if(pokemon_entity.Appeared<localtime() and pokemon_entity.Desappeared>localtime()):
+        if( pokemon_entity.Appeared
+            and pokemon_entity.Desappeared
+            and pokemon_entity.Appeared < localtime()
+            and pokemon_entity.Desappeared > localtime()):
             add_pokemon(
                 folium_map,
                 pokemon_entity.Lat,
