@@ -35,15 +35,15 @@ def show_all_pokemons(request):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
-        if( pokemon_entity.Appeared
-            and pokemon_entity.Desappeared
-            and pokemon_entity.Appeared < localtime()
-            and pokemon_entity.Desappeared > localtime()):
+        if( pokemon_entity.appeared_at
+            and pokemon_entity.disappeared_at
+            and pokemon_entity.appeared_at < localtime()
+            and pokemon_entity.disappeared_at > localtime()):
             add_pokemon(
                 folium_map,
-                pokemon_entity.Lat,
-                pokemon_entity.Lon,
-                f"{base_url}media/{pokemon_entity.Pokemon.image}"
+                pokemon_entity.latitude,
+                pokemon_entity.longitude,
+                f"{base_url}media/{pokemon_entity.pokemon.image}"
             )
 
     pokemons_on_page = []
@@ -67,16 +67,19 @@ def show_pokemon(request, pokemon_id):
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
     else:
         pokemon = pokemons[0]
-    pokemons_entities = PokemonEntity.objects.filter(Pokemon=pokemon)
+    pokemons_entities = PokemonEntity.objects.filter(pokemon=pokemon)
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
-        if(pokemon_entity.Appeared<localtime() and pokemon_entity.Desappeared>localtime()):
+        if( pokemon_entity.appeared_at
+            and pokemon_entity.disappeared_at
+            and pokemon_entity.appeared_at < localtime()
+            and pokemon_entity.disappeared_at > localtime()):
             add_pokemon(
                 folium_map,
-                pokemon_entity.Lat,
-                pokemon_entity.Lon,
-                f"{base_url}media/{pokemon_entity.Pokemon.image}"
+                pokemon_entity.latitude,
+                pokemon_entity.longitude,
+                f"{base_url}media/{pokemon_entity.pokemon.image}"
             )
 
     next_evolution = pokemon.next_evolutions.all()
