@@ -16,7 +16,7 @@ class Pokemon(models.Model):
         on_delete=models.SET_NULL,
     )
     def __str__(self):
-        return f"{self.title}"
+        return self.title
 
 class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE, name="Pokemon", verbose_name="Покемон")
@@ -30,4 +30,4 @@ class PokemonEntity(models.Model):
     pokemon_defence = models.IntegerField(name="Defence", null=True, blank=True, verbose_name="Защита")
     pokemon_stamina = models.IntegerField(name="Stamina", null=True, blank=True, verbose_name="Выносливость")
     def __str__(self):
-        return f"{self.Pokemon.title}"
+        return self.Pokemon.title
