@@ -35,7 +35,7 @@ def show_all_pokemons(request):
         disappeared_at__gt=local_time
     )
 
-    base_url = request.build_absolute_uri()
+    media_url = request.build_absolute_uri('/media/')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
@@ -43,14 +43,14 @@ def show_all_pokemons(request):
             folium_map,
             pokemon_entity.latitude,
             pokemon_entity.longitude,
-            f"{base_url}media/{pokemon_entity.pokemon.image}"
+            f"{media_url}{pokemon_entity.pokemon.image}"
         )
 
     pokemons_on_page = []
     for pokemon in pokemons:
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': f"{base_url}media/{pokemon.image}",
+            'img_url': f"{media_url}{pokemon.image}",
             'title_ru': pokemon.title,
         })
 
@@ -61,12 +61,12 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemons = Pokemon.objects.filter(id=pokemon_id)
-    base_url = request.build_absolute_uri('/')
-    if len(pokemons)!=1:
+    media_url = request.build_absolute_uri('/media/')
+
+    try:
+        pokemon = Pokemon.objects.get(id=pokemon_id)
+    except Pokemon.DoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
-    else:
-        pokemon = pokemons[0]
 
     local_time = localtime()
     pokemons_entities = PokemonEntity.objects.filter(
@@ -81,7 +81,7 @@ def show_pokemon(request, pokemon_id):
             folium_map,
             pokemon_entity.latitude,
             pokemon_entity.longitude,
-            f"{base_url}media/{pokemon_entity.pokemon.image}"
+            f"{media_url}{pokemon_entity.pokemon.image}"
         )
 
     next_evolution = pokemon.next_evolutions.all()
@@ -90,7 +90,7 @@ def show_pokemon(request, pokemon_id):
         pokemon_next_evolution = {
             "title_ru": next_evolution[0].title,
             "pokemon_id": next_evolution[0].id,
-            "img_url": f"{base_url}media/{next_evolution[0].image}",
+            "img_url": f"{media_url}{next_evolution[0].image}",
         }
 
     pokemon_previous_evolution = {}
@@ -98,7 +98,7 @@ def show_pokemon(request, pokemon_id):
         pokemon_previous_evolution = {
             "title_ru": pokemon.previous_evolution.title,
             "pokemon_id": pokemon.previous_evolution.id,
-            "img_url": f"{base_url}media/{pokemon.previous_evolution.image}",
+            "img_url": f"{media_url}{pokemon.previous_evolution.image}",
         }
 
     pokemon_info = {
@@ -107,7 +107,7 @@ def show_pokemon(request, pokemon_id):
         "title_en": pokemon.title_en,
         "title_jp": pokemon.title_jp,
         "description": pokemon.description,
-        "img_url": f"{base_url}media/{pokemon.image}",
+        "img_url": f"{media_url}{pokemon.image}",
         "previous_evolution": pokemon_previous_evolution,
         "next_evolution": pokemon_next_evolution,
         "entities": [],
