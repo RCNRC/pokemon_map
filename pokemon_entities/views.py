@@ -29,22 +29,22 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 def show_all_pokemons(request):
     pokemons = Pokemon.objects.all()
-    pokemons_entities = PokemonEntity.objects.all()
+    local_time = localtime()
+    pokemons_entities = PokemonEntity.objects.filter(
+        appeared_at__lt=local_time,
+        disappeared_at__gt=local_time
+    )
 
     base_url = request.build_absolute_uri()
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
-        if( pokemon_entity.appeared_at
-            and pokemon_entity.disappeared_at
-            and pokemon_entity.appeared_at < localtime()
-            and pokemon_entity.disappeared_at > localtime()):
-            add_pokemon(
-                folium_map,
-                pokemon_entity.latitude,
-                pokemon_entity.longitude,
-                f"{base_url}media/{pokemon_entity.pokemon.image}"
-            )
+        add_pokemon(
+            folium_map,
+            pokemon_entity.latitude,
+            pokemon_entity.longitude,
+            f"{base_url}media/{pokemon_entity.pokemon.image}"
+        )
 
     pokemons_on_page = []
     for pokemon in pokemons:
@@ -63,24 +63,26 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     pokemons = Pokemon.objects.filter(id=pokemon_id)
     base_url = request.build_absolute_uri('/')
-    if(len(pokemons)!=1):
+    if len(pokemons)!=1:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
     else:
         pokemon = pokemons[0]
-    pokemons_entities = PokemonEntity.objects.filter(pokemon=pokemon)
+
+    local_time = localtime()
+    pokemons_entities = PokemonEntity.objects.filter(
+        pokemon=pokemon,
+        appeared_at__lt=local_time,
+        disappeared_at__gt=local_time
+    )
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entities:
-        if( pokemon_entity.appeared_at
-            and pokemon_entity.disappeared_at
-            and pokemon_entity.appeared_at < localtime()
-            and pokemon_entity.disappeared_at > localtime()):
-            add_pokemon(
-                folium_map,
-                pokemon_entity.latitude,
-                pokemon_entity.longitude,
-                f"{base_url}media/{pokemon_entity.pokemon.image}"
-            )
+        add_pokemon(
+            folium_map,
+            pokemon_entity.latitude,
+            pokemon_entity.longitude,
+            f"{base_url}media/{pokemon_entity.pokemon.image}"
+        )
 
     next_evolution = pokemon.next_evolutions.all()
     pokemon_next_evolution = {}
